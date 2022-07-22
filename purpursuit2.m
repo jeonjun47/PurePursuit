@@ -83,9 +83,11 @@ while Goal == 0
         end
         
     end
-    lookahead_pt = wp(j,:);
+    lookahead_pt_x(i,1) = [wp(j,1)];
+    lookahead_pt_y(i,1) = [wp(j,2)];
+    lookahead_pt = [lookahead_pt_x(:,1) lookahead_pt_y(:,1)];
 
-    alpha =  atan2(lookahead_pt(2)-state(2),lookahead_pt(1)-state(1))-state(3);
+    alpha =  atan2(lookahead_pt(i,2)-state(2),lookahead_pt(i,1)-state(1))-state(3);
     R = lookahead_dist/(2*sin(alpha));
     kappa = 1/R;
 
@@ -132,7 +134,7 @@ while Goal == 0
 
 %     scatter(state(1),state(2),10,'filled') 
 %     pause(0.01)
-    i = i + 1;
+
 
     if norm(wp(end,1:2)-state(1:2)) < lookahead_dist/2
         Goal = 1;
@@ -169,7 +171,22 @@ while Goal == 0
 %     pause(0.001)
 
 % 
+    clf
+    plot(wp(:,1),wp(:,2),'b')
+    hold on
+    plot(ego_status(1:i,1),ego_status(1:i,2),'Color','red','LineWidth',2) % xy graph
 
+    grid on
+
+    plot(lookahead_pt(i,1),lookahead_pt(i,2),'Color','green','Marker','o','LineWidth',2) 
+    legend('Path','vehicle','FontSize',15,'Location','southeast') 
+    xlabel('X-axis','Interpreter','latex','FontSize',25)
+    ylabel('Y-axis','Interpreter','latex','FontSize',25)
+    title('Tracking','Interpreter','latex','FontSize',30)
+    set(gca,'Box','On')  
+    pause(0.1)
+
+    i = i + 1;
 end
 
 
@@ -184,7 +201,7 @@ a = 1;
 
 % ego_status(:,5) = filter(b,a,ego_status(:,5));
 
-mode = 1;
+mode = 0;
 
 if mode == 1
     video = VideoWriter("2022-06-13-path_3.avi");
@@ -208,7 +225,7 @@ if mode == 1
         ylabel('Y-axis','Interpreter','latex','FontSize',25)
         title('Tracking','Interpreter','latex','FontSize',30)
         set(gca,'Box','On')  
-    
+        plot(lookahead_pt(kk,1),lookahead_pt(kk,2),'g',30)
         currFrame = getframe(Map1);
         writeVideo(video,currFrame)
     end
